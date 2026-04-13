@@ -23,16 +23,16 @@ async def start(client, message: Message):
         data = await get_file(file_unique_id)
 
         if not data:
-            return await message.reply_text("❌ File not found.")
+            return await message.reply_text("🔎 Fɪʟᴇ Is Nᴏᴛ Fᴏᴜɴᴅ, Cᴏɴᴛᴀᴄᴛ Tᴏ Oᴡɴᴇʀ.")
 
         # ✅ ADDED: GET ORIGINAL CAPTION
         original_caption = data.get("caption", "")
 
         # ✅ ADDED: MERGE CAPTION
-        caption = f"{original_caption}\n\n📢 Channel: @Anime_UpdatesAU"
+        caption = f"{original_caption}\n\n›› Cʜᴀɴɴᴇʟ : @Anime_UpdatesAU"
 
         buttons = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("📢 Updates", url="https://t.me/Anime_UpdatesAU")]]
+            [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
         )
 
         # SAME LOGIC (UNCHANGED)
@@ -65,7 +65,7 @@ async def start(client, message: Message):
 
         return
 
-    await message.reply_text("Welcome To Luffy Store Bot\n\nOwner : @Mr_Mohammed_29")
+    await message.reply_text("Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29")
 
 
 # OWNER UPLOAD ONLY
@@ -97,7 +97,7 @@ async def save_media(client, message: Message):
 
     link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
 
-    await message.reply_text(f"🔗 Link:\n{link}")
+    await message.reply_text(f"🔗 𝗛𝗲𝗿𝗲 𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸:\n{link}")
 
 
 # BLOCK OTHERS (UNCHANGED)
@@ -106,21 +106,21 @@ async def save_media(client, message: Message):
     ~filters.user(OWNER_ID)
 )
 async def block_users(client, message: Message):
-    await message.reply_text("❌ Only owner can upload files.")
+    await message.reply_text("ғᴜᴄᴋ ʏᴏᴜ, ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃..")
 
 
 # STATS (UNCHANGED)
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
     total = await total_users()
-    await message.reply_text(f"📊 Users: {total}")
+    await message.reply_text(f"📊 Tᴏᴛᴀʟ Usᴇʀs: {total}")
 
 
 # BROADCAST (UNCHANGED)
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply to message to broadcast.")
+        return await message.reply_text("Rᴇᴘʟʏ Tᴏ A Mᴇssᴀɢᴇ Tᴏ Bʀᴏᴀᴅᴄᴀsᴛ.")
 
     msg = message.reply_to_message
     users = get_all_users()
@@ -135,7 +135,7 @@ async def broadcast(client, message: Message):
         except:
             failed += 1
 
-    await message.reply_text(f"✅ Done\nSent: {sent}\nFailed: {failed}")
+    await message.reply_text(f"⏳️ Dᴏɴᴇ\nSent: {sent}\nFailed: {failed}")
 
 
 # RUN
