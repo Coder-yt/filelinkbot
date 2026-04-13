@@ -8,12 +8,13 @@ files = db.files
 users = db.users
 
 # FILES
-async def save_file(file_id, file_unique_id):
+async def save_file(file_id, file_unique_id, file_type):  # ✅ added file_type
     await files.update_one(
         {"file_unique_id": file_unique_id},
         {"$set": {
             "file_id": file_id,
-            "file_unique_id": file_unique_id
+            "file_unique_id": file_unique_id,
+            "file_type": file_type  # ✅ new field (no removal)
         }},
         upsert=True
     )
