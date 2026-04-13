@@ -3,7 +3,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
 from database import save_file, get_file, add_user, get_all_users, total_users
 from keep_alive import keep_alive
-import asyncio  # ✅ ADDED (for auto delete)
+import asyncio
 
 app = Client(
     "filelinkbot",
@@ -25,13 +25,17 @@ async def start(client, message: Message):
         if not data:
             return await message.reply_text("❌ File not found.")
 
-        caption = "📁 Here is your file\n\n📢 Channel: @Anime_UpdatesAU"
+        # ✅ ADDED: GET ORIGINAL CAPTION
+        original_caption = data.get("caption", "")
+
+        # ✅ ADDED: MERGE CAPTION
+        caption = f"{original_caption}\n\n📢 Channel: @Anime_UpdatesAU"
 
         buttons = InlineKeyboardMarkup(
             [[InlineKeyboardButton("📢 Updates", url="https://t.me/Anime_UpdatesAU")]]
         )
 
-        # ✅ FIX: SEND BASED ON FILE TYPE
+        # SAME LOGIC (UNCHANGED)
         if data.get("file_type") == "video":
             sent = await message.reply_video(
                 data["file_id"],
@@ -53,7 +57,6 @@ async def start(client, message: Message):
                 reply_markup=buttons
             )
 
-        # ✅ AUTO DELETE AFTER 60 SECONDS
         await asyncio.sleep(300)
         try:
             await sent.delete()
@@ -72,7 +75,10 @@ async def start(client, message: Message):
 )
 async def save_media(client, message: Message):
 
-    # ✅ DETECT FILE TYPE
+    # ✅ ADDED: GET ORIGINAL CAPTION
+    original_caption = message.caption if message.caption else ""
+
+    # SAME DETECTION (UNCHANGED)
     if message.video:
         file = message.video
         file_type = "video"
@@ -86,15 +92,15 @@ async def save_media(client, message: Message):
     file_id = file.file_id
     file_unique_id = file.file_unique_id
 
-    # ✅ SAVE WITH TYPE
-    await save_file(file_id, file_unique_id, file_type)
+    # ✅ UPDATED: SAVE WITH CAPTION (ONLY CHANGE)
+    await save_file(file_id, file_unique_id, file_type, original_caption)
 
     link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
 
     await message.reply_text(f"🔗 Link:\n{link}")
 
 
-# BLOCK OTHERS
+# BLOCK OTHERS (UNCHANGED)
 @app.on_message(
     (filters.document | filters.video | filters.audio) &
     ~filters.user(OWNER_ID)
