@@ -25,9 +25,12 @@ async def get_file(file_unique_id):
 
 # USERS
 async def add_user(user_id):
+    if not user_id:
+        return
+
     await users.update_one(
-        {"user_id": user_id},
-        {"$set": {"user_id": user_id}},
+        {"user_id": int(user_id)},
+        {"$setOnInsert": {"user_id": int(user_id)}},
         upsert=True
     )
 
