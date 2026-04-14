@@ -138,10 +138,6 @@ async def stats(client, message: Message):
     await message.reply_text(f"📊 Tᴏᴛᴀʟ Usᴇʀs: {total}")
 
 # BROADCAST (UNCHANGED)
-import asyncio
-from pyrogram import filters
-from pyrogram.types import Message
-
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
 
