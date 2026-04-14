@@ -2,6 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
 from database import ( save_file, get_file, add_user, get_all_users, total_users, add_admin, remove_admin, ban_user, unban_user, is_banned )
+from pyrogram.handlers import MessageHandler
 from keep_alive import keep_alive
 import asyncio
 
@@ -20,6 +21,8 @@ async def ban_check(client, message):
     if message.from_user:
         if await is_banned(message.from_user.id):
             return await message.reply_text("🚫 You are banned from using this bot.")
+
+app.add_handler(MessageHandler(ban_check, filters.all))
             
 # START + LINK HANDLER
 @app.on_message(filters.command("start"))
