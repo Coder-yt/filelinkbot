@@ -150,18 +150,29 @@ async def broadcast(client, message: Message):
     sent = 0
     failed = 0
 
+    # ✅ ADDED: status message
+    status = await message.reply_text("🚀 Broadcasting started...")
+
     async for user in users:
         try:
-            await msg.copy(chat_id=user["user_id"])
+            user_id = user.get("user_id")
+
+            if not user_id:
+                continue
+
+            await msg.copy(chat_id=int(user_id))
             sent += 1
-            await asyncio.sleep(0.1)  # ✅ prevent flood
+
+            await asyncio.sleep(0.2)  # safer delay
+
         except Exception as e:
             failed += 1
+            print(f"Failed: {user_id} | {e}")  # ✅ DEBUG
 
-    await message.reply_text(
+    await status.edit_text(
         f"📢 Broadcast Complete\n\n✅ Sent: {sent}\n❌ Failed: {failed}"
     )
-
+    
 @app.on_message(filters.private & ~filters.service)
 async def auto_add_user(client, message: Message):
     if message.from_user:
