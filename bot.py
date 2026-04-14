@@ -16,7 +16,7 @@ app = Client(
 @app.on_message(filters.command("start"))
 async def start(client, message: Message):
     user_id = message.from_user.id
-    await add_user(user_id)
+    await add_user(message.from_user.id)
 
     # ✅ ADDED START ANIMATION
     m = await message.reply_text("ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ\nɢᴇᴀʀ 𝟻. . .")
@@ -172,11 +172,6 @@ async def broadcast(client, message: Message):
     await status.edit_text(
         f"📢 Broadcast Complete\n\n✅ Sent: {sent}\n❌ Failed: {failed}"
     )
-    
-@app.on_message(filters.private & ~filters.service)
-async def auto_add_user(client, message: Message):
-    if message.from_user:
-        await add_user(message.from_user.id)
         
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
