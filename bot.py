@@ -83,7 +83,7 @@ async def start(client, message: Message):
 
     # ✅ UPDATED START MESSAGE WITH BUTTONS
     await message.reply_text(
-        "Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
+        "Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
@@ -141,6 +141,7 @@ async def stats(client, message: Message):
 # BROADCAST (UNCHANGED)
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
+
     if not message.reply_to_message:
         return await message.reply_text("Rᴇᴘʟʏ Tᴏ A Mᴇssᴀɢᴇ Tᴏ Bʀᴏᴀᴅᴄᴀsᴛ.")
 
@@ -152,14 +153,21 @@ async def broadcast(client, message: Message):
 
     async for user in users:
         try:
-            await msg.copy(user["user_id"])
+            await msg.copy(chat_id=user["user_id"])
             sent += 1
-        except:
+            await asyncio.sleep(0.1)  # ✅ prevent flood
+        except Exception as e:
             failed += 1
 
-    await message.reply_text(f"⏳️ Dᴏɴᴇ\nSent: {sent}\nFailed: {failed}")
+    await message.reply_text(
+        f"📢 Broadcast Complete\n\n✅ Sent: {sent}\n❌ Failed: {failed}"
+    )
 
-
+@app.on_message(filters.private & ~filters.service)
+async def auto_add_user(client, message: Message):
+    if message.from_user:
+        await add_user(message.from_user.id)
+        
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
 async def about_callback(client, query):
@@ -188,3 +196,6 @@ async def home_callback(client, query):
 # RUN
 keep_alive()
 app.run()
+
+#----Don't Remove Credit----# 
+#----owner @Mr_Mohammed_29----# 
