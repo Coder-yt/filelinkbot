@@ -18,6 +18,19 @@ async def start(client, message: Message):
     user_id = message.from_user.id
     await add_user(user_id)
 
+    # ✅ ADDED START ANIMATION
+    m = await message.reply_text("ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ\nɢᴇᴀʀ 𝟻. . .")
+    await asyncio.sleep(0.5)
+    await m.edit_text("🎊")
+    await asyncio.sleep(0.5)
+    await m.edit_text("⚡")
+    await asyncio.sleep(0.5)
+    await m.edit_text("sᴜɴ ɢᴏᴅ ɴɪᴋᴀ!...")
+    await asyncio.sleep(0.5)
+    await m.delete()
+
+    await message.reply_sticker("CAACAgUAAxkBAAEcODlp3ayV-H4JKd81Rbpm1LA3xNusNgACgx8AAvKI0FaRFZgCkrs1NB4E")
+
     if len(message.command) > 1:
         file_unique_id = message.command[1]
         data = await get_file(file_unique_id)
@@ -25,17 +38,13 @@ async def start(client, message: Message):
         if not data:
             return await message.reply_text("🔎 Fɪʟᴇ Is Nᴏᴛ Fᴏᴜɴᴅ, Cᴏɴᴛᴀᴄᴛ Tᴏ Oᴡɴᴇʀ.")
 
-        # ✅ ADDED: GET ORIGINAL CAPTION
         original_caption = data.get("caption", "")
-
-        # ✅ ADDED: MERGE CAPTION
         caption = f"{original_caption}\n\n›› Cʜᴀɴɴᴇʟ : @Anime_UpdatesAU"
 
         buttons = InlineKeyboardMarkup(
             [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")]]
         )
 
-        # SAME LOGIC (UNCHANGED)
         if data.get("file_type") == "video":
             sent = await message.reply_video(
                 data["file_id"],
@@ -57,6 +66,13 @@ async def start(client, message: Message):
                 reply_markup=buttons
             )
 
+        # ✅ ADDED AFTER FILE ANIMATION
+        m2 = await message.reply_text("ᴍᴏɴᴋᴇʏ ᴅ ʟᴜғғʏ\nɢᴇᴀʀ 𝟻. . .")
+        await asyncio.sleep(0.4)
+        await m2.edit_text("sᴜɴ ɢᴏᴅ ɴɪᴋᴀ!...")
+        await asyncio.sleep(0.5)
+        await m2.delete()
+
         await asyncio.sleep(300)
         try:
             await sent.delete()
@@ -65,7 +81,16 @@ async def start(client, message: Message):
 
         return
 
-    await message.reply_text("Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29")
+    # ✅ UPDATED START MESSAGE WITH BUTTONS
+    await message.reply_text(
+        "Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
+                [InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")]
+            ]
+        )
+    )
 
 
 # OWNER UPLOAD ONLY
@@ -75,10 +100,8 @@ async def start(client, message: Message):
 )
 async def save_media(client, message: Message):
 
-    # ✅ ADDED: GET ORIGINAL CAPTION
     original_caption = message.caption if message.caption else ""
 
-    # SAME DETECTION (UNCHANGED)
     if message.video:
         file = message.video
         file_type = "video"
@@ -92,7 +115,6 @@ async def save_media(client, message: Message):
     file_id = file.file_id
     file_unique_id = file.file_unique_id
 
-    # ✅ UPDATED: SAVE WITH CAPTION (ONLY CHANGE)
     await save_file(file_id, file_unique_id, file_type, original_caption)
 
     link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
@@ -136,6 +158,31 @@ async def broadcast(client, message: Message):
             failed += 1
 
     await message.reply_text(f"⏳️ Dᴏɴᴇ\nSent: {sent}\nFailed: {failed}")
+
+
+# ✅ ADDED ABOUT HANDLER
+@app.on_callback_query(filters.regex("about"))
+async def about_callback(client, query):
+    await query.message.edit_text(
+        "⍟───[ MY ᴅᴇᴛᴀɪʟꜱ ]───⍟\n\n‣ ᴍʏ ɴᴀᴍᴇ : @AU_Luffy_Store_bot\n‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : @Mr_Mohammed_29(ᴍᴏʜᴀᴍᴍᴇᴅ)\n‣ ʟɪʙʀᴀʀʏ : ᴘʏʀᴏɢʀᴀᴍ\n‣ ʟᴀɴɢᴜᴀɢᴇ : ᴘʏᴛʜᴏɴ 3\n‣ ᴅᴀᴛᴀ ʙᴀsᴇ : ᴍᴏɴɢᴏ ᴅʙ\n‣ ʙᴏᴛ sᴇʀᴠᴇʀ : @BotsServerDead\n‣ᴜᴘᴅᴀᴛᴇs : @Anime_UpdatesAU\n‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : [sᴛᴀʙʟᴇ]",
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🏠 Home", callback_data="home")]]
+        )
+    )
+
+
+# ✅ ADDED HOME HANDLER
+@app.on_callback_query(filters.regex("home"))
+async def home_callback(client, query):
+    await query.message.edit_text(
+        "Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
+                [InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")]
+            ]
+        )
+    )
 
 
 # RUN
