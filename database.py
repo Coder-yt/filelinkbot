@@ -35,7 +35,10 @@ async def add_user(user_id):
     )
 
 async def get_all_users():
-    return users.find()
-
+    users_list = []
+    async for user in users.find():
+        users_list.append(user["user_id"])
+    return users_list
+    
 async def total_users():
     return await users.count_documents({})
