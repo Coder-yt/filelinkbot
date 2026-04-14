@@ -2,6 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
 from database import save_file, get_file, add_user, get_all_users, total_users
+from database import add_admin, remove_admin, ban_user, unban_user, is_banned
 from keep_alive import keep_alive
 import asyncio
 
@@ -12,6 +13,15 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
+# =========================
+# 🚫 BAN CHECK (ADDED - DO NOT MODIFY OLD CODE)
+# =========================
+@app.on_message(filters.all)
+async def ban_check(client, message):
+    if message.from_user:
+        if await is_banned(message.from_user.id):
+            return await message.reply_text("🚫 You are banned from using this bot.")
+            
 # START + LINK HANDLER
 @app.on_message(filters.command("start"))
 async def start(client, message: Message):
@@ -168,6 +178,55 @@ async def broadcast(client, message: Message):
         f"✅ Sent: {sent}\n"
         f"❌ Failed: {failed}"
     )
+
+# =========================
+# 👑 ADMIN SYSTEM (ADDED ONLY)
+# =========================
+
+@app.on_message(filters.command("addadmin") & filters.user(OWNER_ID))
+async def addadmin(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("Usage: /addadmin user_id")
+
+    await add_admin(message.command[1])
+    await message.reply_text("✅ Admin added")
+
+
+@app.on_message(filters.command("deladmin") & filters.user(OWNER_ID))
+async def deladmin(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("Usage: /deladmin user_id")
+
+    await remove_admin(message.command[1])
+    await message.reply_text("❌ Admin removed")
+
+
+@app.on_message(filters.command("ban") & filters.user(OWNER_ID))
+async def ban(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("Usage: /ban user_id")
+
+    await ban_user(message.command[1])
+    await message.reply_text("🚫 User banned")
+
+
+@app.on_message(filters.command("unban") & filters.user(OWNER_ID))
+async def unban(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("Usage: /unban user_id")
+
+    await unban_user(message.command[1])
+    await message.reply_text("✅ User unbanned")
+
+
+@app.on_message(filters.command("info") & filters.user(OWNER_ID))
+async def info(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("Usage: /info user_id")
+
+    user_id = message.command[1]
+    await message.reply_text(f"👤 User ID: {user_id}")
+
         
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
