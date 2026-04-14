@@ -138,6 +138,10 @@ async def stats(client, message: Message):
     await message.reply_text(f"📊 Tᴏᴛᴀʟ Usᴇʀs: {total}")
 
 # BROADCAST (UNCHANGED)
+import asyncio
+from pyrogram import filters
+from pyrogram.types import Message
+
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
 
@@ -145,17 +149,17 @@ async def broadcast(client, message: Message):
         return await message.reply_text("Rᴇᴘʟʏ Tᴏ A Mᴇssᴀɢᴇ Tᴏ Bʀᴏᴀᴅᴄᴀsᴛ.")
 
     msg = message.reply_to_message
-    users = get_all_users()
+
+    users = await get_all_users()   # ✅ MUST be awaited if async DB
 
     sent = 0
     failed = 0
 
-    # ✅ ADDED: status message
     status = await message.reply_text("🚀 Broadcasting started...")
 
-    async for user in users:
+    for user in users:   # ✅ FIX: normal loop (NOT async for)
         try:
-            user_id = user.get("user_id")
+            user_id = user.get("user_id") if isinstance(user, dict) else user
 
             if not user_id:
                 continue
@@ -163,14 +167,16 @@ async def broadcast(client, message: Message):
             await msg.copy(chat_id=int(user_id))
             sent += 1
 
-            await asyncio.sleep(0.2)  # safer delay
+            await asyncio.sleep(0.2)
 
         except Exception as e:
             failed += 1
-            print(f"Failed: {user_id} | {e}")  # ✅ DEBUG
+            print(f"Failed: {user} | {e}")
 
     await status.edit_text(
-        f"📢 Broadcast Complete\n\n✅ Sent: {sent}\n❌ Failed: {failed}"
+        f"📢 Broadcast Complete\n\n"
+        f"✅ Sent: {sent}\n"
+        f"❌ Failed: {failed}"
     )
         
 # ✅ ADDED ABOUT HANDLER
