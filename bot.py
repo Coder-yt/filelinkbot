@@ -150,34 +150,28 @@ async def broadcast(client, message: Message):
 
     msg = message.reply_to_message
 
-    users = await get_all_users()   # ✅ MUST be awaited if async DB
+    users = await get_all_users()
 
-    sent = 0
-    failed = 0
+sent = 0
+failed = 0
 
-    status = await message.reply_text("🚀 Broadcasting started...")
+status = await message.reply_text("🚀 Broadcasting started...")
 
-    for user in users:   # ✅ FIX: normal loop (NOT async for)
-        try:
-            user_id = user.get("user_id") if isinstance(user, dict) else user
+for user_id in users:
+    try:
+        await msg.copy(chat_id=int(user_id))
+        sent += 1
+        await asyncio.sleep(0.2)
 
-            if not user_id:
-                continue
+    except Exception as e:
+        failed += 1
+        print(f"Failed: {user_id} | {e}")
 
-            await msg.copy(chat_id=int(user_id))
-            sent += 1
-
-            await asyncio.sleep(0.2)
-
-        except Exception as e:
-            failed += 1
-            print(f"Failed: {user} | {e}")
-
-    await status.edit_text(
-        f"📢 Broadcast Complete\n\n"
-        f"✅ Sent: {sent}\n"
-        f"❌ Failed: {failed}"
-    )
+await status.edit_text(
+    f"📢 Broadcast Complete\n\n"
+    f"✅ Sent: {sent}\n"
+    f"❌ Failed: {failed}"
+)
         
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
