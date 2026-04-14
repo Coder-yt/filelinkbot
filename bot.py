@@ -142,32 +142,32 @@ async def stats(client, message: Message):
 async def broadcast(client, message: Message):
 
     if not message.reply_to_message:
-        return await message.reply_text("Rᴇᴘʟʏ Tᴏ A Mᴇssᴀɢᴇ Tᴏ Bʀᴏᴀᴅᴄᴀsᴛ.")
+        return await message.reply_text("Reply to a message to broadcast.")
 
     msg = message.reply_to_message
 
     users = await get_all_users()
 
-sent = 0
-failed = 0
+    sent = 0
+    failed = 0
 
-status = await message.reply_text("🚀 Broadcasting started...")
+    status = await message.reply_text("🚀 Broadcasting started...")  # ✅ INSIDE FUNCTION
 
-for user_id in users:
-    try:
-        await msg.copy(chat_id=int(user_id))
-        sent += 1
-        await asyncio.sleep(0.2)
+    for user_id in users:
+        try:
+            await msg.copy(chat_id=int(user_id))
+            sent += 1
+            await asyncio.sleep(0.2)
 
-    except Exception as e:
-        failed += 1
-        print(f"Failed: {user_id} | {e}")
+        except Exception as e:
+            failed += 1
+            print(f"Failed: {user_id} | {e}")
 
-await status.edit_text(
-    f"📢 Broadcast Complete\n\n"
-    f"✅ Sent: {sent}\n"
-    f"❌ Failed: {failed}"
-)
+    await status.edit_text(
+        f"📢 Broadcast Complete\n\n"
+        f"✅ Sent: {sent}\n"
+        f"❌ Failed: {failed}"
+    )
         
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
