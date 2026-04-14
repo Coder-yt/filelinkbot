@@ -1,8 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
-from database import ( save_file, get_file, add_user, get_all_users, total_users, add_admin, remove_admin, ban_user, unban_user, is_banned )
-from pyrogram.handlers import MessageHandler
+from database import save_file, get_file, add_user, get_all_users, total_users
 from keep_alive import keep_alive
 import asyncio
 
@@ -13,17 +12,6 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-# =========================
-# 🚫 BAN CHECK (ADDED - DO NOT MODIFY OLD CODE)
-# =========================
-@app.on_message(filters.all)
-async def ban_check(client, message):
-    if message.from_user:
-        if await is_banned(message.from_user.id):
-            return await message.reply_text("🚫 You are banned from using this bot.")
-
-app.add_handler(MessageHandler(ban_check, filters.all))
-            
 # START + LINK HANDLER
 @app.on_message(filters.command("start"))
 async def start(client, message: Message):
@@ -41,7 +29,7 @@ async def start(client, message: Message):
     await asyncio.sleep(0.5)
     await m.delete()
 
-    await message.reply_sticker("CAACAgUAAxkBAAEcODlp3ayV-H4JKd81Rbpm1LA3xNusNgACgx8AAvKI0FaRFZgCkrs1NB4E")
+    await message.reply_sticker("CAACAgUAAxkBAAEXmw5plIsM5lyaJfj5NwNp13QSrbW9NQACnBsAAlztqVYRMk2x1suA_B4E")
 
     if len(message.command) > 1:
         file_unique_id = message.command[1]
@@ -95,11 +83,11 @@ async def start(client, message: Message):
 
     # ✅ UPDATED START MESSAGE WITH BUTTONS
     await message.reply_text(
-        "Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
+        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
-                [InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")]
+                [InlineKeyboardButton("ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about")]
             ]
         )
     )
@@ -180,55 +168,6 @@ async def broadcast(client, message: Message):
         f"✅ Sent: {sent}\n"
         f"❌ Failed: {failed}"
     )
-
-# =========================
-# 👑 ADMIN SYSTEM (ADDED ONLY)
-# =========================
-
-@app.on_message(filters.command("addadmin") & filters.user(OWNER_ID))
-async def addadmin(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /addadmin user_id")
-
-    await add_admin(message.command[1])
-    await message.reply_text("✅ Admin added")
-
-
-@app.on_message(filters.command("deladmin") & filters.user(OWNER_ID))
-async def deladmin(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /deladmin user_id")
-
-    await remove_admin(message.command[1])
-    await message.reply_text("❌ Admin removed")
-
-
-@app.on_message(filters.command("ban") & filters.user(OWNER_ID))
-async def ban(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /ban user_id")
-
-    await ban_user(message.command[1])
-    await message.reply_text("🚫 User banned")
-
-
-@app.on_message(filters.command("unban") & filters.user(OWNER_ID))
-async def unban(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /unban user_id")
-
-    await unban_user(message.command[1])
-    await message.reply_text("✅ User unbanned")
-
-
-@app.on_message(filters.command("info") & filters.user(OWNER_ID))
-async def info(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /info user_id")
-
-    user_id = message.command[1]
-    await message.reply_text(f"👤 User ID: {user_id}")
-
         
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
@@ -236,7 +175,7 @@ async def about_callback(client, query):
     await query.message.edit_text(
         "⍟───[ MY ᴅᴇᴛᴀɪʟꜱ ]───⍟\n\n‣ ᴍʏ ɴᴀᴍᴇ : @AU_Luffy_Store_bot\n‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : @Mr_Mohammed_29(ᴍᴏʜᴀᴍᴍᴇᴅ)\n‣ ʟɪʙʀᴀʀʏ : ᴘʏʀᴏɢʀᴀᴍ\n‣ ʟᴀɴɢᴜᴀɢᴇ : ᴘʏᴛʜᴏɴ 3\n‣ ᴅᴀᴛᴀ ʙᴀsᴇ : ᴍᴏɴɢᴏ ᴅʙ\n‣ ʙᴏᴛ sᴇʀᴠᴇʀ : @BotsServerDead\n‣ᴜᴘᴅᴀᴛᴇs : @Anime_UpdatesAU\n‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : [sᴛᴀʙʟᴇ]",
         reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton("🏠 Home", callback_data="home")]]
+            [[InlineKeyboardButton("ʜᴏᴍᴇ", callback_data="home")]]
         )
     )
 
@@ -245,11 +184,11 @@ async def about_callback(client, query):
 @app.on_callback_query(filters.regex("home"))
 async def home_callback(client, query):
     await query.message.edit_text(
-        "Hᴇʏ Wᴇʟᴄᴏᴍᴇ ᴛᴏ Oғғɪᴄɪᴀʟ @AU_Luffy_Store_bot\n\n›› Tʜɪs ʙᴏᴛ sᴛᴏʀᴇs ᴛʜᴇ ғɪʟᴇs ᴀɴᴅ ɢᴇɴᴇʀᴀᴛᴇ ʟɪɴᴋs ᴛᴏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴜsᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ғᴏʀ ʟɪɴᴋ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇ\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
+        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : @Mr_Mohammed_29",
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
-                [InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")]
+                [InlineKeyboardButton("ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about")]
             ]
         )
     )
