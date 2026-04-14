@@ -1,8 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
-from database import save_file, get_file, add_user, get_all_users, total_users
-from database import add_admin, remove_admin, ban_user, unban_user, is_banned
+from database import ( save_file, get_file, add_user, get_all_users, total_users, add_admin, remove_admin, ban_user, unban_user, is_banned )
 from keep_alive import keep_alive
 import asyncio
 
