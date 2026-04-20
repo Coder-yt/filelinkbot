@@ -56,9 +56,9 @@
 **NOTE**
 
     Don't Add Values In Config.py 
-    
+    After Deploying On Render, Copy these link example like https://filelinkbot1.onrender.com
+    Now Go To Chrome Search UptimeRobot and open UptimeRobot, click on new and paste in there link https://filelinkbot1.onrender.com and keep 5 min check time 
 ----
-
 ----
   **Bot Commands**
 
