@@ -122,7 +122,7 @@ async def save_media(client, message: Message):
     await message.reply_text(f"🔗 𝗛𝗲𝗿𝗲 𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸:\n{link}")
 
 
-# BLOCK OTHERS (UNCHANGED)
+# BLOCK OTHERS
 @app.on_message(
     (filters.document | filters.video | filters.audio) &
     ~filters.user(OWNER_ID)
@@ -131,18 +131,37 @@ async def block_users(client, message: Message):
     await message.reply_text("ғᴜᴄᴋ ʏᴏᴜ, ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃..")
 
 
+
 # STATS (UNCHANGED)
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
-    total = await total_users()
-    await message.reply_text(f"📊 Tᴏᴛᴀʟ Usᴇʀs: {total}")
 
-# BROADCAST (UNCHANGED)
+    start = time.time()
+
+    total = await total_users()
+
+    # ⏱ uptime
+    uptime_seconds = int(time.time() - START_TIME)
+    hours, remainder = divmod(uptime_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    # ⚡ ping
+    ping = round((time.time() - start) * 1000)
+
+    await message.reply_text(
+        f"📊 **𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀**\n\n"
+        f"👥 Usᴇʀs: {total}\n"
+        f"⏱ Uᴘᴛɪᴍᴇ: {hours}h {minutes}m {seconds}s\n"
+        f"⚡ Pɪɴɢ: {ping} ms\n"
+        f"🧾 Vᴇʀsɪᴏɴ: {BOT_VERSION}"
+    )
+
+# BROADCAST
 @app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
 async def broadcast(client, message: Message):
 
     if not message.reply_to_message:
-        return await message.reply_text("Reply to a message to broadcast.")
+        return await message.reply_text("Rᴇᴘʟʏ Tᴏ A Mᴇssᴀɢᴇ Tᴏ Bʀᴏᴀᴅᴄᴀsᴛ..")
 
     msg = message.reply_to_message
 
@@ -151,7 +170,7 @@ async def broadcast(client, message: Message):
     sent = 0
     failed = 0
 
-    status = await message.reply_text("🚀 Broadcasting started...")  # ✅ INSIDE FUNCTION
+    status = await message.reply_text("⏳️ 𝗕𝗿𝗼𝗮𝗱𝗰𝗮𝘀𝘁 𝗦𝘁𝗮𝗿𝘁𝗲𝗱.....")  # ✅ INSIDE FUNCTION
 
     for user_id in users:
         try:
@@ -164,10 +183,15 @@ async def broadcast(client, message: Message):
             print(f"Failed: {user_id} | {e}")
 
     await status.edit_text(
-        f"📢 Broadcast Complete\n\n"
-        f"✅ Sent: {sent}\n"
-        f"❌ Failed: {failed}"
+        f"⏳️ 𝗕𝗿𝗼𝗮𝗱𝗰𝗮𝘀𝘁 𝗖𝗼𝗺𝗽𝗹𝗲𝘁𝗲𝗱\n\n"
+        f"◇ Sᴜᴄᴄᴇssғᴜʟ: {sent}\n"
+        f"◇ Uɴsᴜᴄᴄᴇssғᴜʟ: {failed}"
     )
+    
+@app.on_message(filters.private & ~filters.service)
+async def auto_add_user(client, message: Message):
+    if message.from_user:
+        await add_user(message.from_user.id)
         
 # ✅ ADDED ABOUT HANDLER
 @app.on_callback_query(filters.regex("about"))
