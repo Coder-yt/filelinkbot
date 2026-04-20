@@ -4,6 +4,10 @@ from config import *
 from database import save_file, get_file, add_user, get_all_users, total_users
 from keep_alive import keep_alive
 import asyncio
+import time
+
+START_TIME = time.time()
+BOT_VERSION = "v2.0"
 
 app = Client(
     "filelinkbot",
