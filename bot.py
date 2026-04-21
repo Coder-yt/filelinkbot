@@ -1,7 +1,15 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import *
+from pyrogram.types import InputMediaPhoto
 from pyrogram.enums import ParseMode
+import random
+
+IMAGES = [
+    "https://graph.org/file/98245197c3a4185b49dbe-3df65fb012e4195cff.jpg",
+    "https://graph.org/file/27dd5451f160ce28dadd4-8ca0a7d6480451adc8.jpg",
+    "https://graph.org/file/0e77ba48a8b7a3b09296f-362372bee0d84fd217.jpg"
+]
 from database import save_file, get_file, add_user, get_all_users, total_users
 from keep_alive import keep_alive
 
@@ -102,17 +110,27 @@ async def start(client, message: Message):
             pass
 
     # ✅ UPDATED START MESSAGE WITH BUTTONS
-    await message.reply_text(
-        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : [ᴍᴏʜᴀᴍᴍᴇᴅ](https://t.me/Mr_Mohammed_29)",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
-                [InlineKeyboardButton("ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about")]
-            ]
-        ),
-        parse_mode=ParseMode.MARKDOWN
-    )
+photo = random.choice(IMAGES)
 
+await message.reply_photo(
+    photo=photo,
+    caption=(
+        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n"
+        "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
+    ),
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU"),
+                InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")
+            ],
+            [
+                InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/Mr_Mohammed_29")
+            ]
+        ]
+    ),
+    parse_mode=ParseMode.MARKDOWN
+)
 
 # OWNER UPLOAD ONLY
 @app.on_message(
@@ -153,7 +171,7 @@ async def block_users(client, message: Message):
 
 
 
-# STATS (UNCHANGED)
+# STATS
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
 
@@ -233,20 +251,34 @@ async def about_callback(client, query):
     )
 
 
-# ✅ ADDED HOME HANDLER (UNCHANGED)
+# ✅ ADDED HOME HANDLER
 @app.on_callback_query(filters.regex("home"))
 async def home_callback(client, query):
-    await query.message.edit_text(
-        "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲ʟ 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝗲𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸.\n\n›› Oᴡɴᴇʀ : [ᴍᴏʜᴀᴍᴍᴇᴅ](https://t.me/Mr_Mohammed_29)",
+
+    photo = random.choice(IMAGES)
+
+    await query.message.edit_media(
+        media=InputMediaPhoto(
+            media=photo,
+            caption=(
+                "𝗛𝗲𝗹𝗹𝗼 𝗱𝗲𝗮𝗿,\n\n"
+                "›› 𝗜 𝗰𝗮𝗻 𝘀𝘁𝗼𝗿𝗲 𝗽𝗿𝗶𝘃𝗮𝘁𝗲 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗦𝗽𝗲𝗰𝗶𝗳𝗶𝗲𝗱 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 𝗮𝗻𝗱 𝗼𝘁𝗵𝗲𝗿 𝘂𝘀𝗲𝗿𝘀 𝗰𝗮𝗻 𝗮𝗰𝗰𝘀𝘀 𝗶𝘁 𝗳𝗿𝗼𝗺 𝘀𝗽𝗲𝗰𝗶𝗮𝗹 𝗹𝗶𝗻𝗸."
+            ),
+            parse_mode=ParseMode.MARKDOWN
+        ),
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU")],
-                [InlineKeyboardButton("ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about")]
+                [
+                    InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/Anime_UpdatesAU"),
+                    InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about")
+                ],
+                [
+                    InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/Mr_Mohammed_29")
+                ]
             ]
-        ),
-        parse_mode=ParseMode.MARKDOWN
+        )
     )
-
+    
 #RUN
 keep_alive()
 app.run()
