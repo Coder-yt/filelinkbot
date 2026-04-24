@@ -30,7 +30,7 @@
 <h3 align="center">
     ─「 ᴅᴇᴩʟᴏʏ ᴏɴ ʀᴇɴᴅᴇʀ 」─
 </h3>
-<p align="center"><a href="https://render.com/deploy?repo=https://github.com/Codeflix-Bots/ProRenameBot">
+<p align="center"><a href="https://render.com/deploy?repo=https://github.com/Coder-yt/filelinkbot">
 <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render">
 </a></p>
 </details>
@@ -63,15 +63,20 @@
     Now Go To Chrome Search UptimeRobot and open UptimeRobot, click on new and paste in there link https://filelinkbot1.onrender.com
     keep 5 min check time 
 ----
+**Now Upgraded to V3.0** 
 ----
   **Bot Commands**
 
-  /start - start the bot, direct send the file bot will give you the ink
-           [**Only Owner Can Send The File**]
+  /start - start the bot, direct send the file to bot, bot will give you the link
+           [**Only Owner + Admin Can Send The Files**]
   
-  /stats - check users [Owner Only]
+  /stats - check users abd refresh stats [Owner Only]
   
   /broadcast - broadcast to the users [Owner Only]
+
+  /addmin - Add admin with user id [ex: /addadmin 1234566] [Owner Only]
+
+  /removeadmin - Remove Admin with user id [ex: /removeadmin 1234566] [Owner Only]
   
 ----
 
