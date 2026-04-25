@@ -1,5 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_URI
+from datetime import datetime
 
 client = AsyncIOMotorClient(MONGO_URI)
 db = client.filebot
@@ -47,21 +48,29 @@ async def total_users():
 
 # ADMIN SYSTEM
 
-async def add_admin_db(user_id):
+async def add_admin_db(user_id, name, username):
+
     user_id = int(user_id)
 
     await admins.update_one(
         {"user_id": user_id},
-        {"$set": {"user_id": user_id}},
+        {"$set": {
+            "user_id": user_id,
+            "name": name,
+            "username": username,
+            "joined_date": datetime.now().strftime("%d-%m-%Y %H:%M")
+        }},
         upsert=True
     )
 
+async def get_all_admins():
+    admins_list = []
+    async for admin in admins.find():
+        admins_list.append(admin)
+    return admins_list
 
 async def remove_admin_db(user_id):
-    user_id = int(user_id)
-
-    await admins.delete_one({"user_id": user_id})
-
+    await admins.delete_one({"user_id": int(user_id)})
 
 async def is_admin(user_id):
     user_id = int(user_id)
