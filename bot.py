@@ -111,9 +111,10 @@ logging.basicConfig(level=logging.INFO)
 # ------------------------- #
 
 IMAGES = [
-    "https://graph.org/file/98245197c3a4185b49dbe-3df65fb012e4195cff.jpg",
-    "https://graph.org/file/27dd5451f160ce28dadd4-8ca0a7d6480451adc8.jpg",
-    "https://graph.org/file/0e77ba48a8b7a3b09296f-362372bee0d84fd217.jpg"
+    "AgACAgUAAxkBAAIHiWpiB1zFmP1eQSpb5TUztD0UKoDdAAI7GWsblIMIV43SgSB8TbQyAAgBAAMCAAN3AAceBA",
+    "AgACAgUAAxkBAAIHi2piCw1SzmzOMAWDjV-yvd73IOQ0AAKDE2sblIMQV-Hxw982KnNVAAgBAAMCAAN5AAceBA",
+    "AgACAgUAAxkBAAIHjWpiCxpIuLdo7rDcJN9ESUQsAAGM5QACPRJrG5NGsVYJAoYha3x6rgAIAQADAgADeQAHHgQ",
+    "AgACAgUAAxkBAAIHj2piCyPqgt7BK5fXiyeZNVYmbT3AAAK1FGsb0zHAVs3uxQOJqpNyAAgBAAMCAAN5AAceBA"
 ]
 
 # ------------------------- #
@@ -488,6 +489,12 @@ async def check_force_sub(client, user_id):
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
 # ------------------------- #
+
+@app.on_message(filters.photo & filters.private & filters.user(OWNER_ID))
+async def get_photo_id(client, message):
+    await message.reply_text(
+        f"<b>Photo File ID:</b>\n\n<code>{message.photo.file_id}</code>"
+    )
 
 # START + LINK HANDLER
 @app.on_message(filters.command("start"))
