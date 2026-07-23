@@ -1,3 +1,4 @@
+
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=36BCF7F1&width=435&lines=Welcome+To+Adavance+File+Store+bot;Bot+is+Made+By+Mohammed)](https://git.io/typing-svg)
 
 ---
@@ -35,19 +36,21 @@
 ## ✨ Features
 
 ### 👤 User Features
-- 🚀 **Start Bot** and generate shareable file links (Owner/Admin uploads)
-- 📦 **Batch File Store** for multiple channel messages (Owner/Admin)
-- 🆔 **User ID** lookup command
-- 💚 **Alive Check** to verify bot status
-- ⚠️ **Disclaimer Center** (Privacy, Version & Support)
-- 🌍 **Text Translation** into multiple languages
+- 🚀 **Start Bot** with Premium Home Interface
+- 📦 **Batch File Store** for Telegram Channel Messages (Owner/Admin Uploads)
+- 🔗 **Instant Shareable File Links**
+- 🆔 **User ID** Lookup
+- 💚 **Alive Check**
+- ⚠️ **Disclaimer** Information
+- 🌍 **Text Translation** into Multiple Languages
 - 🎵 **Song Lyrics Search**
-- 🖼️ Premium UI with Images & Inline Buttons
+- 🌐 **Telegraph Links**
+- 🖼️ **Premium UI** with Images & Inline Buttons
 
 ### 👑 Owner & Admin Features
 - 📥 **Batch Indexing** of Telegram Channel Posts
 - 📈 **Bot Statistics**
-- 📑 **Force Subscribe Index** Viewer
+- 📑 **Force Subscribe Index**
 - ➕ **Add Force Subscribe** Channels
 - ➖ **Remove Force Subscribe** Channels
 - 📋 **Force Subscribe List**
@@ -71,8 +74,7 @@
 - ⚡ **Async & High-Speed Performance**
 - 🔒 **Secure Force Subscribe System**
 - 📂 **Unlimited File Storage**
-- 🔗 **Instant Shareable File Links**
-- 📊 **Multi-Database Support (Up to 5 MongoDB Databases)**
+- 📊 **Multi-Database Support**
 - 🌐 **Telegraph Integration**
 - 🎨 **Premium Command UI**
 - 🖥️ **24/7 Uptime Support**
