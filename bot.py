@@ -125,6 +125,9 @@ IMAGES = [
 from database import (
     save_file,
     get_file,
+    increase_single_links,
+    increase_batch_links,
+    get_link_stats,
     increase_download,
     add_user,
     get_all_users,
@@ -409,6 +412,8 @@ async def handle_batch(client, message):
 
         link = f"https://t.me/{bot_username}?start={encoded}"
 
+        await increase_batch_links()
+
         await message.reply_text(
             f"✅ ʙᴀᴛᴄʜ ʟɪɴᴋs ɢᴇɴᴇʀᴀᴛᴇᴅ\n\n{link}"
         )
@@ -493,7 +498,7 @@ async def check_force_sub(client, user_id):
 @app.on_message(filters.photo & filters.private & filters.user(OWNER_ID))
 async def get_photo_id(client, message):
     await message.reply_text(
-        f"<b>Photo File ID:</b>\n\n<code>{message.photo.file_id}</code>"
+        f"<b>Photo or Image or Pic File ID:</b>\n\n<code>{message.photo.file_id}</code>"
     )
 
 # START + LINK HANDLER
@@ -893,8 +898,10 @@ async def save_media(client, message: Message):
         f"📁 {getattr(file, 'file_name', file_type)}"
     )
 
-    link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
+    await increase_single_links()
 
+    link = f"https://t.me/{BOT_USERNAME}?start={file_unique_id}"
+    
     await message.reply_text(f"🔗 𝗛𝗲𝗿𝗲 𝗜𝘀 𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸:\n{link}")
     
 # ------------------------- #
@@ -906,29 +913,62 @@ async def save_media(client, message: Message):
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
 
+    msg = await message.reply_text(
+        "<b>**Extracting Bot Statistics...**</b>",
+        parse_mode=ParseMode.HTML
+    )
+
     start = time.time()
+
     total = await total_users()
+    total_files_count = await total_files()
+    single_links, batch_links = await get_link_stats()
 
     uptime_seconds = int(time.time() - START_TIME)
     hours, remainder = divmod(uptime_seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
 
-    ping = round((time.time() - start) * 1000)
+    ping = round((time.time() - start) * 1000, 3)
+
+    cpu = psutil.cpu_percent(interval=1)
+    ram = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
+
+    def progress(percent):
+        filled = int(percent // 10)
+        return "■" * filled + "▤" + "□" * (9 - filled)
 
     keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_stats")]]
+        [
+            [InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_stats")]
+        ]
     )
 
-    process = psutil.Process()
-    memory = process.memory_info().rss / (1024 * 1024)
+    await msg.edit_text(
+        f"""⌬ <b>𝗕𝗢𝗧 𝗦𝗧𝗔𝗧𝗜𝗦𝗧𝗜𝗖𝗦 :</b>
 
-    await message.reply_text(
-        f"📊 **𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀**\n\n"
-        f"👥 Usᴇʀs: {total}\n"
-        f"⏱ Uᴘᴛɪᴍᴇ: {hours}h {minutes}m {seconds}s\n"
-        f"⚡ Pɪɴɢ: {ping} ms\n"
-        f"🧠 Mᴇᴍᴏʀʏ Usᴀɢᴇ: {memory:.2f} MB\n"
-        f"🧾 Vᴇʀsɪᴏɴ: {BOT_VERSION}",
+┎ <b>Bᴏᴛ Uᴘᴛɪᴍᴇ :</b> {hours}h {minutes}m {seconds}s
+┃ <b>Cᴜʀʀᴇɴᴛ Pɪɴɢ :</b> {ping} ms
+┖ <b>Tᴏᴛᴀʟ Uꜱᴇʀꜱ :</b> {total}
+
+┎ <b>RAM ( MEMORY ) :</b>
+┖ [{progress(ram.percent)}] {ram.percent}%
+
+┎ <b>CPU ( USAGE ) :</b>
+┖ [{progress(cpu)}] {cpu}%
+
+┎ <b>DISK :</b>
+┃ [{progress(disk.percent)}] {disk.percent}%
+┃ <b>Usᴇᴅ :</b> {disk.used / (1024**3):.2f} GB
+┃ <b>Fʀᴇᴇ :</b> {disk.free / (1024**3):.2f} GB
+┖ <b>Tᴏᴛᴀʟ :</b> {disk.total / (1024**3):.2f} GB
+
+┎ <b>Fɪʟᴇ Sᴛᴏʀᴇ :</b>
+┃ <b>Tᴏᴛᴀʟ Fɪʟᴇs :</b> {total_files_count}
+┃ <b>Sɪɴɢʟᴇ Lɪɴᴋs :</b> {single_links}
+┖ <b>Bᴀᴛᴄʜ Lɪɴᴋs :</b> {batch_links}
+""",
+        parse_mode=ParseMode.HTML,
         reply_markup=keyboard
     )
 
@@ -1718,32 +1758,60 @@ async def close_button(client, query):
 async def refresh_stats(client, query):
 
     start = time.time()
+
     total = await total_users()
+    total_files_count = await total_files()
+    single_links, batch_links = await get_link_stats()
 
     uptime_seconds = int(time.time() - START_TIME)
     hours, remainder = divmod(uptime_seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
 
-    ping = round((time.time() - start) * 1000)
+    ping = round((time.time() - start) * 1000, 3)
+
+    cpu = psutil.cpu_percent(interval=1)
+    ram = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
+
+    def progress(percent):
+        filled = int(percent // 10)
+        return "■" * filled + "▤" + "□" * (9 - filled)
 
     keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_stats")]]
+        [
+            [InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", callback_data="refresh_stats")]
+        ]
     )
 
-    process = psutil.Process()
-    memory = process.memory_info().rss / (1024 * 1024)
-
     await query.message.edit_text(
-        f"📊 **𝗕𝗼𝘁 𝗦𝘁𝗮𝘁𝘂𝘀**\n\n"
-        f"👥 Usᴇʀs: {total}\n"
-        f"⏱ Uᴘᴛɪᴍᴇ: {hours}h {minutes}m {seconds}s\n"
-        f"⚡ Pɪɴɢ: {ping} ms\n"
-        f"🧠 Mᴇᴍᴏʀʏ Usᴀɢᴇ: {memory:.2f} MB\n"
-        f"🧾 Vᴇʀsɪᴏɴ: {BOT_VERSION}",
+        f"""⌬ <b>𝗕𝗢𝗧 𝗦𝗧𝗔𝗧𝗜𝗦𝗧𝗜𝗖𝗦 :</b>
+
+┎ <b>Bᴏᴛ Uᴘᴛɪᴍᴇ :</b> {hours}h {minutes}m {seconds}s
+┃ <b>Cᴜʀʀᴇɴᴛ Pɪɴɢ :</b> {ping} ms
+┖ <b>Tᴏᴛᴀʟ Uꜱᴇʀꜱ :</b> {total}
+
+┎ <b>RAM ( MEMORY ) :</b>
+┖ [{progress(ram.percent)}] {ram.percent}%
+
+┎ <b>CPU ( USAGE ) :</b>
+┖ [{progress(cpu)}] {cpu}%
+
+┎ <b>DISK :</b>
+┃ [{progress(disk.percent)}] {disk.percent}%
+┃ <b>Usᴇᴅ :</b> {disk.used / (1024**3):.2f} GB
+┃ <b>Fʀᴇᴇ :</b> {disk.free / (1024**3):.2f} GB
+┖ <b>Tᴏᴛᴀʟ :</b> {disk.total / (1024**3):.2f} GB
+
+┎ <b>Fɪʟᴇ Sᴛᴏʀᴇ :</b>
+┃ <b>Tᴏᴛᴀʟ Fɪʟᴇs :</b> {total_files_count}
+┃ <b>Sɪɴɢʟᴇ Lɪɴᴋs :</b> {single_links}
+┖ <b>Bᴀᴛᴄʜ Lɪɴᴋs :</b> {batch_links}
+""",
+        parse_mode=ParseMode.HTML,
         reply_markup=keyboard
     )
 
-    await query.answer("Sᴛᴀᴛs Uᴘᴅᴀᴛᴇᴅ 🔄")   
+    await query.answer("Sᴛᴀᴛs Uᴘᴅᴀᴛᴇᴅ 🔄")
 
 # ------------------------- #
 # Don't Remove Credit 
