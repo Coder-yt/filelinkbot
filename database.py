@@ -37,6 +37,7 @@ users = db.users
 admins = db["admins"]
 forcesubs = db["forcesubs"]
 banned = db["banned"]
+stats = db["stats"]
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -462,6 +463,50 @@ async def get_active_database():
         return data["name"]
 
     return None
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+# ------------------------- #
+# LINK STATS
+# ------------------------- #
+
+async def increase_single_links():
+    await stats.update_one(
+        {"_id": "links"},
+        {"$inc": {"single_links": 1}},
+        upsert=True
+    )
+    
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+async def increase_batch_links():
+    await stats.update_one(
+        {"_id": "links"},
+        {"$inc": {"batch_links": 1}},
+        upsert=True
+    )
+
+# ------------------------- #
+# Don't Remove Credit 
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+async def get_link_stats():
+    data = await stats.find_one({"_id": "links"})
+
+    if not data:
+        return 0, 0
+
+    return (
+        data.get("single_links", 0),
+        data.get("batch_links", 0)
+    )
 
 # ------------------------- #
 # Don't Remove Credit 
