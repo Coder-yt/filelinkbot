@@ -155,7 +155,7 @@ from database import (
     week_files,
     add_database,
     get_all_databases,
-    remove_database as remove_saved_db,
+    get_active_database as get_saved_active_database,
     set_active_database
 )
 
@@ -293,7 +293,7 @@ async def batch_command(client, message):
 
     if await is_banned(message.from_user.id):
         return await message.reply_text(
-            "🚫 You are banned from using this bot."
+            "**🚫 You are banned from using this bot.**"
         )
 
     user_id = message.from_user.id
@@ -301,7 +301,7 @@ async def batch_command(client, message):
     if user_id != OWNER_ID and not await is_admin(user_id):
 
         return await message.reply_text(
-            " ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃."
+            "**ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!**."
         )
 
     BATCH_USERS[user_id] = {
@@ -598,7 +598,7 @@ async def start(client, message: Message):
 
                         caption = (
                             f"**{original_caption}**\n\n"
-                            f"**›› ʙʏ :** [ᴀᴇʀᴏ ᴜɴɪᴛʏ](https://t.me/Aero_Unity)"
+                            f"**›› ʙʏ : [ᴀᴇʀᴏ ᴜɴɪᴛʏ](https://t.me/Aero_Unity)**"
                         )
 
                         buttons = InlineKeyboardMarkup(
@@ -837,7 +837,7 @@ async def save_media(client, message: Message):
 
     if await is_banned(message.from_user.id):
         return await message.reply_text(
-            "Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ..."
+            "ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!"
         )
 
     # Allow only owner + admin
@@ -914,7 +914,7 @@ async def save_media(client, message: Message):
 async def stats(client, message: Message):
 
     msg = await message.reply_text(
-        "<b>**Extracting Bot Statistics...**</b>",
+        "<b>Extracting Bot Statistics...</b>",
         parse_mode=ParseMode.HTML
     )
 
@@ -1068,7 +1068,7 @@ async def auto_add_user(client, message):
 async def add_admin(client, message: Message):
 
     if message.from_user.id != OWNER_ID:
-        return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃..")
+        return await message.reply_text("ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!..")
 
     if len(message.command) < 2:
         return await message.reply_text("ʀᴇᴘʟʏ ᴛᴏ /addadmin user_id")
@@ -1106,7 +1106,7 @@ async def add_admin(client, message: Message):
 async def remove_admin(client, message: Message):
 
     if message.from_user.id != OWNER_ID:
-        return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃..")
+        return await message.reply_text("ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!.")
 
     if len(message.command) < 2:
         return await message.reply_text("ʀᴇᴘʟʏ ᴛᴏ /removeadmin user_id")
@@ -1131,7 +1131,7 @@ async def admin_list(client, message: Message):
 
     if message.from_user.id != OWNER_ID:
         return await message.reply_text(
-            "🚫 **Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ...**"
+            "**ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!..**"
         )
 
     admins = await get_all_admins()
@@ -1180,7 +1180,7 @@ async def index_command(client, message):
         or await is_admin(message.from_user.id)
     ):
         return await message.reply_text(
-            "🚫 **Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ..**"
+            "**ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!**"
         )
 
     rows = []
@@ -1391,7 +1391,7 @@ async def banlist(client, message):
 async def add_fsub(client, message):
 
     if not (message.from_user.id == OWNER_ID or await is_admin(message.from_user.id)):
-        return await message.reply_text("🚫 ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃...")
+        return await message.reply_text("ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!")
 
     # Reply to forwarded channel post
     if message.reply_to_message:
@@ -1475,7 +1475,7 @@ async def add_fsub(client, message):
 async def remove_fsub(client, message):
 
     if not (message.from_user.id == OWNER_ID or await is_admin(message.from_user.id)):
-        return await message.reply_text("🚫 Unauthorized.")
+        return await message.reply_text("ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!.")
 
     if len(message.command) < 2:
         return await message.reply_text(
@@ -1517,7 +1517,7 @@ async def remove_fsub(client, message):
 async def fsub_list(client, message):
 
     if not (message.from_user.id == OWNER_ID or await is_admin(message.from_user.id)):
-        return await message.reply_text("🚫 ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ᴍᴀsᴛᴇʀ. ɢᴏ ᴀᴡᴀʏ, ʙɪᴛᴄʜ 🙃..")
+        return await message.reply_text("ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!")
 
     channels = await get_force_subs()
 
@@ -1952,7 +1952,7 @@ async def restart_cmd(client, message):
 
     if message.from_user.id != OWNER_ID:
         return await message.reply_text(
-            "🚫 <b>Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ...</b>"
+            "<b>ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!</b>"
         )
 
     text = (
@@ -2290,7 +2290,7 @@ async def adddb_cmd(client, message):
 
     if message.from_user.id != OWNER_ID:
         return await message.reply_text(
-            "🚫 <b>Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ..</b>"
+            "<b>ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!</b>"
         )
 
     if len(message.command) < 3:
@@ -2367,7 +2367,7 @@ async def removedb_cmd(client, message):
 
     if message.from_user.id != OWNER_ID:
         return await message.reply_text(
-            "🚫 <b>Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ</b>"
+            "<b>ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!</b>"
         )
 
     if len(message.command) != 2:
@@ -2456,7 +2456,7 @@ async def dblist_cmd(client, message):
 
     if message.from_user.id != OWNER_ID:
         return await message.reply_text(
-            "🚫 <b>Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ.</b>"
+            "<b>ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!</b>"
         )
 
     wait = await message.reply_text(
@@ -2550,7 +2550,7 @@ async def dbstatus_cmd(client, message):
 
     if message.from_user.id != OWNER_ID:
         return await message.reply_text(
-            "<b>Iᴍ Lᴏʏᴀʟ Tᴏ Mʏ Oᴡɴᴇʀ</b>"
+            "<b>ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!</b>"
         )
 
     wait = await message.reply_text(
@@ -2816,8 +2816,30 @@ async def translate_cmd(client, message):
 # Owner @Mr_Mohammed_29
 # ------------------------- #      
 
+async def restore_databases():
+    dbs = await get_all_databases()
+
+    for db in dbs:
+        try:
+            await load_database(
+                db["mongo_uri"],
+                db["name"]
+            )
+            print(f"Loaded DB: {db['name']}")
+        except Exception as e:
+            print(f"Failed to load {db['name']} -> {e}")
+
+    active = await get_saved_active_database()
+
+    if active:
+        switch_database(active)
+
 if __name__ == "__main__":
     keep_alive()  
+
+    app.loop.run_until_complete(
+        restore_databases()
+    )
     print("""
 ╔══════════════════════════════╗
 ║   ᴍᴏʜᴀᴍᴍᴇᴅᴅᴇᴠ-ʏᴛ                   ║
