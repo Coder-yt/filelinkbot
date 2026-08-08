@@ -38,6 +38,7 @@ admins = db["admins"]
 forcesubs = db["forcesubs"]
 banned = db["banned"]
 stats = db["stats"]
+bot_ratings = db["bot_ratings"]
 
 # ------------------------- #
 # Don't Remove Credit 
@@ -528,3 +529,80 @@ async def get_link_stats():
 # Don't Remove Credit 
 # Owner @Mr_Mohammed_29
 # ------------------------- #
+
+# ------------------------- #
+# BOT RATINGS
+# ------------------------- #
+
+async def save_rating(user_id, rating):
+
+    await bot_ratings.update_one(
+        {"user_id": int(user_id)},
+        {
+            "$set": {
+                "user_id": int(user_id),
+                "rating": int(rating),
+                "updated_at": datetime.utcnow()
+            }
+        },
+        upsert=True
+    )
+
+
+# ------------------------- #
+# Don't Remove Credit
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+async def get_user_rating(user_id):
+
+    data = await bot_ratings.find_one(
+        {"user_id": int(user_id)}
+    )
+
+    if data:
+        return data.get("rating")
+
+    return None
+
+
+# ------------------------- #
+# Don't Remove Credit
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+async def get_all_ratings():
+
+    ratings = []
+
+    async for data in bot_ratings.find(
+        {},
+        {
+            "_id": 0,
+            "user_id": 1,
+            "rating": 1
+        }
+    ):
+
+        if data.get("rating") is not None:
+            ratings.append(data)
+
+    return ratings
+
+
+# ------------------------- #
+# Don't Remove Credit
+# Owner @Mr_Mohammed_29
+# ------------------------- #
+
+async def total_ratings():
+
+    return await bot_ratings.count_documents(
+        {
+            "rating": {
+                "$exists": True
+            }
+        }
+    )
+
+
