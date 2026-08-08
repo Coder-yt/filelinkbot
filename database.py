@@ -605,18 +605,3 @@ async def total_ratings():
         }
     )
 
-# ==========================================
-# OWNER / ADMIN CHECK
-# ==========================================
-
-async def is_owner_or_admin(user_id):
-
-    if user_id == OWNER_ID:
-        return True
-
-    try:
-        return await is_admin(user_id)
-    except Exception:
-        return False
-
-
