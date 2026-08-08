@@ -46,6 +46,9 @@
 - 🎵 **Song Lyrics Search**
 - 🌐 **Telegraph Links**
 - 🖼️ **Premium UI** with Images & Inline Buttons
+- ⭐ **Rate Bot from 1–10**
+- 💬 **Automatic Rating Feedback**
+- 📊 **View Personal Rating Confirmation**
 
 ### 👑 Owner & Admin Features
 - 📥 **Batch Indexing** of Telegram Channel Posts
@@ -66,6 +69,9 @@
 - 📋 **Database List**
 - 🗄️ **Database Status**
 - 📢 **Broadcast Messages** to All Users
+- ⭐ **Bot Rating Statistics (Owner Only)**
+- 📊 **Total Ratings & Average Rating**
+- 🌟 **Excellent / Good / Poor / Bad Rating Breakdown**
 
 ### ⚙️ Technical Features
 - 🚀 Built with **Pyrogram 2.x**
@@ -110,7 +116,8 @@ alive - Check bot is alive or not
 disclaimer - To Read the copyrights
 speedtest - Test server speed
 lyrics - search the song name lyrics 
-translate - it translate the word is multi language 
+translate - it translate the word is multi language
+rate - Rate the bot from 1 to 10.
 stats - Check bot users and statistics (Owner only)
 index - check Force sub index added (Owner only)
 addfsub - Add a channel to Force Subscribe (Owner | Admin only)
@@ -126,6 +133,7 @@ adddb - to add MongoDB urls (support 5)(Owner only)
 removedb - Remove MongoDB url (Owner only)
 dblist - check Db lits added (Owner only)
 dbstatus - check db is added and online (Owner only)
+ratings — View bot rating statistics (Owner only)
 broadcast - Send message to all users (Owner only)
 ```
 ---
