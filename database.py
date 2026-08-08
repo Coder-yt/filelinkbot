@@ -105,7 +105,21 @@ async def add_user(user_id):
 # ------------------------- #
 
 async def get_all_users():
-    return [u["user_id"] async for u in users.find({}, {"user_id": 1, "_id": 0})]
+    user_ids = []
+
+    async for user in users.find(
+        {"user_id": {"$exists": True}},
+        {"user_id": 1, "_id": 0}
+    ):
+        user_id = user.get("user_id")
+
+        if user_id is not None:
+            try:
+                user_ids.append(int(user_id))
+            except (ValueError, TypeError):
+                continue
+
+    return user_ids
     
 # ------------------------- #
 # Don't Remove Credit 
@@ -113,7 +127,9 @@ async def get_all_users():
 # ------------------------- #
 
 async def total_users():
-    return await users.count_documents({})
+    return await users.count_documents(
+        {"user_id": {"$exists": True}}
+    )
 
 # ------------------------- #
 # Don't Remove Credit 
