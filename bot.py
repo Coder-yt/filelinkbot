@@ -367,6 +367,11 @@ async def batch_command(client, message):
         "dbstatus",
         "lyrics",
         "translate"
+        "lockbot",
+        "unlockbot",
+        "maintenance",
+        "rate",
+        "ratings"
     ])
 )
 async def handle_batch(client, message):
@@ -1068,8 +1073,12 @@ async def broadcast(client, message: Message):
         "dblist",
         "dbstatus",
         "lyrics",
-        "translate"
-        
+        "translate",
+        "lockbot",
+        "unlockbot",
+        "maintenance",
+        "rate",
+        "ratings"
     ])
 )
 async def auto_add_user(client, message):
@@ -2855,6 +2864,293 @@ async def restore_databases():
 
     if active:
         switch_database(active)
+
+# ==========================================
+# /lockbot
+# OWNER + ADMIN
+# ==========================================
+
+@app.on_message(filters.command("lockbot") & filters.private)
+async def lockbot_cmd(client, message):
+
+    if not await is_owner_or_admin(message.from_user.id):
+        return await message.reply_text(
+            "❌ <b>You are not authorized to use this command.</b>",
+            parse_mode=ParseMode.HTML
+        )
+
+    global BOT_LOCKED
+
+    if BOT_LOCKED:
+        return await message.reply_text(
+            "🔒 <b>Bot is already locked.</b>",
+            parse_mode=ParseMode.HTML
+        )
+
+    BOT_LOCKED = True
+
+    await message.reply_text(
+        "🔒 <b>BOT LOCKED</b>\n\n"
+        "Normal users can no longer use the bot.\n"
+        "Admins and Owner can still use it.",
+        parse_mode=ParseMode.HTML
+                       )
+
+# ==========================================
+# /unlockbot
+# OWNER + ADMIN
+# ==========================================
+
+@app.on_message(filters.command("unlockbot") & filters.private)
+async def unlockbot_cmd(client, message):
+
+    if not await is_owner_or_admin(message.from_user.id):
+        return await message.reply_text(
+            "❌ <b>You are not authorized to use this command.</b>",
+            parse_mode=ParseMode.HTML
+        )
+
+    global BOT_LOCKED
+
+    if not BOT_LOCKED:
+        return await message.reply_text(
+            "🔓 <b>Bot is already unlocked.</b>",
+            parse_mode=ParseMode.HTML
+        )
+
+    BOT_LOCKED = False
+
+    await message.reply_text(
+        "🔓 <b>BOT UNLOCKED</b>\n\n"
+        "Normal users can use the bot again.",
+        parse_mode=ParseMode.HTML
+    )
+
+# ==========================================
+# /maintenance
+# OWNER + ADMIN
+# ==========================================
+
+@app.on_message(filters.command("maintenance") & filters.private)
+async def maintenance_cmd(client, message):
+
+    if not await is_owner_or_admin(message.from_user.id):
+        return await message.reply_text(
+            "❌ <b>You are not authorized to use this command.</b>",
+            parse_mode=ParseMode.HTML
+        )
+
+    if len(message.command) == 1:
+
+        status = (
+            "🟢 ENABLED"
+            if MAINTENANCE["enabled"]
+            else "🔴 DISABLED"
+        )
+
+        return await message.reply_text(
+            f"<b>🛠 MAINTENANCE PANEL</b>\n\n"
+            f"<b>Status:</b> {status}\n"
+            f"<b>Reason:</b> "
+            f"<code>{MAINTENANCE['reason']}</code>\n\n"
+            f"<b>Usage:</b>\n"
+            f"<code>/maintenance on Bot Updating</code>\n"
+            f"<code>/maintenance off</code>",
+            parse_mode=ParseMode.HTML
+        )
+
+    args = message.text.split(maxsplit=2)
+
+    mode = args[1].lower()
+
+    if mode == "on":
+
+        reason = "No reason provided"
+
+        if len(args) >= 3:
+            reason = args[2]
+
+        MAINTENANCE["enabled"] = True
+        MAINTENANCE["reason"] = reason
+
+        await message.reply_text(
+            f"🛠 <b>MAINTENANCE ENABLED</b>\n\n"
+            f"📝 <b>Reason:</b> "
+            f"<code>{reason}</code>",
+            parse_mode=ParseMode.HTML
+        )
+
+    elif mode == "off":
+
+        MAINTENANCE["enabled"] = False
+        MAINTENANCE["reason"] = "No reason provided"
+
+        await message.reply_text(
+            "✅ <b>MAINTENANCE DISABLED</b>",
+            parse_mode=ParseMode.HTML
+        )
+
+    else:
+
+        await message.reply_text(
+            "<b>Usage:</b>\n\n"
+            "<code>/maintenance on Bot Updating</code>\n"
+            "<code>/maintenance off</code>",
+            parse_mode=ParseMode.HTML
+        )
+        
+# ==========================================
+# BOT LOCK + MAINTENANCE CHECKER
+# ==========================================
+
+@app.on_message(filters.private, group=-100)
+async def bot_control_checker(client, message):
+
+    if not message.from_user:
+        return
+
+    user_id = message.from_user.id
+
+    # Owner/Admin bypass
+    if await is_owner_or_admin(user_id):
+        return
+
+    # Don't interfere with /rate
+    if message.command:
+        command = message.command[0].lower()
+
+        if command == "rate":
+            return
+
+    # Maintenance
+    if MAINTENANCE["enabled"]:
+
+        await message.reply_text(
+            f"🛠 <b>BOT UNDER MAINTENANCE</b>\n\n"
+            f"• The bot is currently being updated.\n"
+            f"• Please try again later.\n\n"
+            f"📝 <b>Reason:</b>\n"
+            f"<code>{MAINTENANCE['reason']}</code>",
+            parse_mode=ParseMode.HTML
+        )
+
+        raise StopPropagation
+
+    # Locked
+    if BOT_LOCKED:
+
+        await message.reply_text(
+            "🔒 <b>BOT LOCKED</b>\n\n"
+            "The bot is currently locked for normal users.\n"
+            "Please try again later.",
+            parse_mode=ParseMode.HTML
+        )
+
+        raise StopPropagation
+
+# ==========================================
+# RATE BOT
+# ==========================================
+
+@app.on_message(filters.command("rate") & filters.private)
+async def rate_bot(client, message):
+
+    user_id = message.from_user.id
+
+    if len(message.command) != 2:
+        return await message.reply_text(
+            "<b>⭐ Rate Our Bot</b>\n\n"
+            "Please give a rating from <b>1 to 10</b>.\n\n"
+            "<b>Example:</b>\n"
+            "<code>/rate 9</code>"
+        )
+
+    try:
+        rating = int(message.command[1])
+    except ValueError:
+        return await message.reply_text(
+            "❌ Please enter a number from <b>1 to 10</b>."
+        )
+
+    if rating < 1 or rating > 10:
+        return await message.reply_text(
+            "❌ Rating must be between <b>1 and 10</b>."
+        )
+
+    await save_rating(user_id, rating)
+
+    if rating >= 9:
+        feedback = "🌟 Excellent"
+    elif rating >= 7:
+        feedback = "😊 Good"
+    elif rating >= 4:
+        feedback = "😐 Poor"
+    else:
+        feedback = "😞 Bad"
+
+    total = await total_ratings()
+
+    await message.reply_text(
+        f"✅ <b>Thank you for rating the bot!</b>\n\n"
+        f"⭐ Your Rating: <b>{rating}/10</b>\n"
+        f"📝 Feedback: <b>{feedback}</b>\n\n"
+        f"👥 Total Ratings: <b>{total}</b>"
+        )
+
+# ==========================================
+# RATINGS STATISTICS
+# OWNER ONLY
+# ==========================================
+
+@app.on_message(filters.command("ratings") & filters.private)
+async def ratings_command(client, message):
+
+    if message.from_user.id != OWNER_ID:
+        return await message.reply_text(
+            "<b>ʙᴀᴋᴋᴀ ! ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ ꜱᴇɴᴘᴀɪ!!</b>"
+        )
+
+    ratings = await get_all_ratings()
+
+    if not ratings:
+        return await message.reply_text(
+            "⭐ <b>Bot Ratings</b>\n\n"
+            "No users have rated the bot yet."
+        )
+
+    rating_values = [
+        int(x["rating"])
+        for x in ratings
+        if x.get("rating") is not None
+    ]
+
+    if not rating_values:
+        return await message.reply_text(
+            "⭐ No valid ratings found."
+        )
+
+    total = len(rating_values)
+
+    excellent = sum(1 for r in rating_values if r >= 9)
+    good = sum(1 for r in rating_values if 7 <= r <= 8)
+    poor = sum(1 for r in rating_values if 4 <= r <= 6)
+    bad = sum(1 for r in rating_values if 1 <= r <= 3)
+
+    average = sum(rating_values) / total
+
+    await message.reply_text(
+        f"""⭐ <b>BOT RATING STATISTICS</b>
+
+👥 <b>Total Ratings:</b> {total}
+
+⭐ <b>Average Rating:</b> {average:.2f}/10
+
+🌟 <b>Excellent (9-10):</b> {excellent}
+😊 <b>Good (7-8):</b> {good}
+😐 <b>Poor (4-6):</b> {poor}
+😞 <b>Bad (1-3):</b> {bad}
+"""
+                    )
 
 if __name__ == "__main__":
     keep_alive()  
