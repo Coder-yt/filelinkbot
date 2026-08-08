@@ -185,7 +185,11 @@ from keep_alive import keep_alive
 START_TIME = time.time()
 BOT_VERSION = "v3.0"
 CACHE = {}
-MAINTENANCE = False
+BOT_LOCKED = False
+MAINTENANCE = {
+    "enabled": False,
+    "reason": "No reason provided"
+}
 
 # ------------------------- #
 # Don't Remove Credit 
