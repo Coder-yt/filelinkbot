@@ -156,7 +156,11 @@ from database import (
     add_database,
     get_all_databases,
     get_active_database as get_saved_active_database,
-    set_active_database
+    set_active_database,
+    save_rating,
+    get_user_rating,
+    get_all_ratings,
+    total_ratings
 )
 
 from multidb import (
