@@ -185,15 +185,6 @@ from keep_alive import keep_alive
 START_TIME = time.time()
 BOT_VERSION = "v3.0"
 CACHE = {}
-BOT_LOCKED = False
-MAINTENANCE = {
-    "enabled": False,
-    "reason": "No reason provided"
-}
-
-# ==========================================
-# OWNER / ADMIN CHECK
-# ==========================================
 
 async def is_owner_or_admin(user_id):
 
