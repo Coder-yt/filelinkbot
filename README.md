@@ -141,9 +141,10 @@ broadcast - Send message to all users (Owner only)
 
 > [!NOTE]
 
-- Only **Owner and Admins** can send files to generate links.
-- Batch system works only with **authorized users**.
-- Don't Add Values In Config.py , add all Values in Render Only
+> Only **Owner and Admins** can send files to generate links.
+> Batch system works only with **authorized users**.
+> Don't Add Values In Config.py , add all Values in Render Only
+---
 
 <details><summary>How To Keep Your Bot Alive</summary>
 <br>
@@ -198,8 +199,6 @@ After adding monitor click:
 
 
   ***Contact Owner***
-  
-   If you got any error while deploying Contact to Owner 
      
 - Developer: <a href="https://t.me/Mr_Mohammed_29"><b>ᴍᴏʜᴀᴍᴍᴇᴅ</b></a>  
 - Updates: <a href="https://t.me/Aero_Unity"><b>ᴀᴇʀᴏ ᴜɴɪᴛʏ</b></a>  
