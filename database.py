@@ -82,7 +82,21 @@ async def save_file(
 # ------------------------- #
 
 async def get_file(file_unique_id):
-    return await files.find_one({"file_unique_id": file_unique_id})
+
+    # First check FileStoreBot
+    data = await client["FileStoreBot"]["files"].find_one(
+        {"file_unique_id": file_unique_id}
+    )
+
+    if data:
+        return data
+
+    # Then check filebot
+    data = await client["filebot"]["files"].find_one(
+        {"file_unique_id": file_unique_id}
+    )
+
+    return data
     
 # ------------------------- #
 # Don't Remove Credit 
@@ -234,7 +248,6 @@ async def get_force_subs():
 
 verify_db = db.verify_cache
 
-
 async def save_verify(user_id, param):
     await verify_db.update_one(
         {"user_id": user_id},
@@ -332,14 +345,16 @@ async def total_files():
 
 async def increase_download(file_unique_id):
 
-    await files.update_one(
+    result = await client["FileStoreBot"]["files"].update_one(
         {"file_unique_id": file_unique_id},
-        {
-            "$inc": {
-                "download_count": 1
-            }
-        }
+        {"$inc": {"download_count": 1}}
     )
+
+    if result.matched_count == 0:
+        await client["filebot"]["files"].update_one(
+            {"file_unique_id": file_unique_id},
+            {"$inc": {"download_count": 1}}
+        )
 
 # ------------------------- #
 # Don't Remove Credit 
