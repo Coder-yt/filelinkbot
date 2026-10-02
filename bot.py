@@ -707,83 +707,273 @@ async def start(client, message: Message):
                     except:
                         pass
 
+        # ================= BATCH LINK =================
+
+        try:
+            decoded = base64.urlsafe_b64decode(
+                param + "=" * (-len(param) % 4)
+            ).decode("utf-8", errors="ignore")
+
+            if decoded.startswith("batch:"):
+
+                _, chat_id, first_id, last_id = decoded.split(":")
+
+                chat_id = int(chat_id)
+                first_id = int(first_id)
+                last_id = int(last_id)
+
+                sent_messages = []
+
+                wait = await message.reply_text(
+                    "⏳ sᴇɴᴅɪɴɢ ғɪʟᴇs..."
+                )
+
+                for msg_id in range(first_id, last_id + 1):
+
+                    try:
+                        msg = await client.get_messages(
+                            chat_id,
+                            msg_id
+                        )
+
+                        if not msg:
+                            continue
+
+                        original_caption = (
+                            msg.caption if msg.caption else ""
+                        )
+
+                        caption = (
+                            f"**{original_caption}**\n\n"
+                            f"**›› ʙʏ : "
+                            f"[ᴀᴇʀᴏ ᴜɴɪᴛʏ]"
+                            f"(https://t.me/Aero_Unity)**"
+                        )
+
+                        buttons = InlineKeyboardMarkup(
+                            [[
+                                InlineKeyboardButton(
+                                    "• ᴜᴘᴅᴀᴛᴇs •",
+                                    url="https://t.me/Aero_Unity"
+                                )
+                            ]]
+                        )
+
+                        if msg.video:
+                            sent = await message.reply_video(
+                                video=msg.video.file_id,
+                                caption=caption,
+                                reply_markup=buttons,
+                                supports_streaming=True,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        elif msg.audio:
+                            sent = await message.reply_audio(
+                                audio=msg.audio.file_id,
+                                caption=caption,
+                                reply_markup=buttons,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        elif msg.document:
+                            sent = await message.reply_document(
+                                document=msg.document.file_id,
+                                caption=caption,
+                                reply_markup=buttons,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        elif msg.sticker:
+                            sent = await message.reply_sticker(
+                                sticker=msg.sticker.file_id
+                            )
+
+                        elif msg.animation:
+                            sent = await message.reply_animation(
+                                animation=msg.animation.file_id,
+                                caption=caption,
+                                reply_markup=buttons,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+
+                        else:
+                            continue
+
+                        sent_messages.append(sent)
+
+                        try:
+                            unique_id = None
+
+                            if msg.video:
+                                unique_id = msg.video.file_unique_id
+                            elif msg.document:
+                                unique_id = msg.document.file_unique_id
+                            elif msg.audio:
+                                unique_id = msg.audio.file_unique_id
+                            elif msg.animation:
+                                unique_id = msg.animation.file_unique_id
+
+                            if unique_id:
+                                await increase_download(
+                                    unique_id
+                                )
+
+                        except Exception:
+                            pass
+
+                        await asyncio.sleep(0.3)
+
+                    except Exception as e:
+                        print(
+                            f"Batch file error: {e}"
+                        )
+
+                await wait.delete()
+
+                await send_log(
+                    f"📦 **Bᴀᴛᴄʜ Aᴄᴄᴇss**\n\n"
+                    f"👤 {message.from_user.mention}\n"
+                    f"🆔 `{message.from_user.id}`\n"
+                    f"Messages: {first_id} - {last_id}"
+                )
+
+                warn = await message.reply_text(
+                    " **⏳ Dᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪssᴜᴇs...**\n\n"
+                    " **›› Yᴏᴜʀ ғɪʟᴇs ᴡɪʟʟ ʙᴇ "
+                    "ᴅᴇʟᴇᴛᴇᴅ ᴡɪᴛʜɪɴ 𝟻 ᴍɪɴᴜᴛᴇs.**\n"
+                    " **›› Sᴏ ᴘʟᴇᴀsᴇ sᴀᴠᴇ ᴛʜᴇᴍ.**",
+                    parse_mode=ParseMode.MARKDOWN
+                )
+
+                await asyncio.sleep(300)
+
+                for x in sent_messages:
+                    try:
+                        await x.delete()
+                    except Exception:
+                        pass
+
                 try:
                     await warn.delete()
-                except:
+                except Exception:
                     pass
- 
+
                 return
 
         except Exception as e:
-            return
+            # Normal file_unique_id is NOT a batch link.
+            # Continue to single-file lookup.
+            print(f"Single link detected: {e}")
 
-        file_unique_id = message.command[1]
+        # ================= SINGLE FILE =================
+
+        file_unique_id = param
+
         data = await get_file(file_unique_id)
 
         if not data:
-            return await message.reply_text("🔎 Fɪʟᴇ Is Nᴏᴛ Fᴏᴜɴᴅ, Cᴏɴᴛᴀᴄᴛ Tᴏ Oᴡɴᴇʀ.")
+            return await message.reply_text(
+                "🔎 Fɪʟᴇ Is Nᴏᴛ Fᴏᴜɴᴅ, "
+                "Cᴏɴᴛᴀᴄᴛ Tᴏ Oᴡɴᴇʀ."
+            )
 
-        original_caption = data.get("caption", "")
+        original_caption = data.get(
+            "caption",
+            ""
+        )
+
         caption = (
-    f"**{original_caption}**\n\n"
-    f"**›› ʙʏ :[ᴀᴇʀᴏ ᴜɴɪᴛʏ](https://t.me/Aero_Unity)**"
-)
+            f"**{original_caption}**\n\n"
+            f"**›› ʙʏ : "
+            f"[ᴀᴇʀᴏ ᴜɴɪᴛʏ]"
+            f"(https://t.me/Aero_Unity)**"
+        )
 
         buttons = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("• ᴜᴘᴅᴀᴛᴇs •", url="https://t.me/Aero_Unity")]]
+            [[
+                InlineKeyboardButton(
+                    "• ᴜᴘᴅᴀᴛᴇs •",
+                    url="https://t.me/Aero_Unity"
+                )
+            ]]
         )
 
-        if data.get("file_type") == "video":
-            sent = await message.reply_video(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                thumb=data.get("thumb") if data.get("thumb") else None,
-                supports_streaming=True,
-                parse_mode=ParseMode.MARKDOWN
-        ) 
+        try:
 
-        elif data.get("file_type") == "audio":
-            sent = await message.reply_audio(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                parse_mode=ParseMode.MARKDOWN
+            if data.get("file_type") == "video":
+
+                sent = await message.reply_video(
+                    video=data["file_id"],
+                    caption=caption,
+                    reply_markup=buttons,
+                    thumb=data.get("thumb") or None,
+                    supports_streaming=True,
+                    parse_mode=ParseMode.MARKDOWN
+                )
+
+            elif data.get("file_type") == "audio":
+
+                sent = await message.reply_audio(
+                    audio=data["file_id"],
+                    caption=caption,
+                    reply_markup=buttons,
+                    parse_mode=ParseMode.MARKDOWN
+                )
+
+            elif data.get("file_type") == "document":
+
+                sent = await message.reply_document(
+                    document=data["file_id"],
+                    caption=caption,
+                    reply_markup=buttons,
+                    parse_mode=ParseMode.MARKDOWN
+                )
+
+            elif data.get("file_type") == "sticker":
+
+                sent = await message.reply_sticker(
+                    sticker=data["file_id"]
+                )
+
+            elif data.get("file_type") == "animation":
+
+                sent = await message.reply_animation(
+                    animation=data["file_id"],
+                    caption=caption,
+                    reply_markup=buttons,
+                    parse_mode=ParseMode.MARKDOWN
+                )
+
+            else:
+                return await message.reply_text(
+                    "‼️ Unsupported format"
+                )
+
+        except Exception as e:
+
+            print(
+                f"FILE SEND ERROR: {type(e).__name__}: {e}"
+            )
+
+            return await message.reply_text(
+                "❌ Fɪʟᴇ Cᴏᴜʟᴅ Nᴏᴛ Bᴇ Sᴇɴᴛ.\n\n"
+                "Pʟᴇᴀsᴇ Tʀʏ Aɢᴀɪɴ."
+            )
+
+        await increase_download(
+            file_unique_id
         )
 
-        elif data.get("file_type") == "document":
-            sent = await message.reply_document(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                parse_mode=ParseMode.MARKDOWN
+        await delete_verify(
+            user_id
         )
-
-        elif data.get("file_type") == "sticker":
-            sent = await message.reply_sticker(
-                data["file_id"]
-        )
-
-        elif data.get("file_type") == "animation":  # GIF
-            sent = await message.reply_animation(
-                data["file_id"],
-                caption=caption,
-                reply_markup=buttons,
-                parse_mode=ParseMode.MARKDOWN
-        )
-
-        else:
-            return await message.reply_text("‼️ Unsupported format")
-
-        await increase_download(file_unique_id)
-
-        await delete_verify(user_id)
 
         await send_log(
             f"📥 **Fɪʟᴇ Aᴄᴄᴇssᴇᴅ**\n\n"
             f"👤 {message.from_user.mention}\n"
             f"🆔 `{message.from_user.id}`\n"
-            f"📂 {data.get('caption','No Caption')}"
+            f"📂 {data.get('caption', 'No Caption')}"
         )
 
         warn = await message.reply_text(
